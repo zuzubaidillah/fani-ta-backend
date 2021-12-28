@@ -3,139 +3,185 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_users extends CI_Model
 {
+	public $table = 'users';
 
-    public $table = 'users';
+	public function cek_data()
+	{
+		$table = $this->table;
+		$query = $this->db->query("SELECT id_user FROM $table");
 
-    public function cek_data()
-    {
-        $table = $this->table;
-        $query = $this->db->query("SELECT id_user FROM $table");
+		if ($query->num_rows() >= 1) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
-        if ($query->num_rows() >= 1) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+	public function cek_username($n, $id=0)
+	{
+		$table = $this->table;
+		if ($id==0){
+			$query = $this->db->query("SELECT id_user FROM $table WHERE username='$n'");
+		}else{
+			$query = $this->db->query("SELECT id_user FROM $table WHERE username='$n' AND id_user!='$id'");
+		}
 
-    public function cek_username($n)
-    {
-        $table = $this->table;
-        $query = $this->db->query("SELECT id_user FROM $table WHERE username='$n'");
+		if ($query->num_rows() >= 1) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
-        if ($query->num_rows() >= 1) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+	public function cek_id($id_user)
+	{
+		$table = $this->table;
+		$query = $this->db->query("SELECT id_user FROM $table WHERE id_user='$id_user'");
 
-    public function cek_id($id_user)
-    {
-        $table = $this->table;
-        $query = $this->db->query("SELECT id_user FROM $table WHERE id_user='$id_user'");
+		if ($query->num_rows() >= 1) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
-        if ($query->num_rows() >= 1) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-    
-    public function post_user($data)
-    {
-        $query = $this->db->insert($this->table, $data);
+	public function post_user($data)
+	{
+		$query = $this->db->insert($this->table, $data);
 
-        if ($query) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+		if ($query) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
-    public function get_password($n)
-    {
-        $table = $this->table;
-        $query = $this->db->query("SELECT id_user, password, nama FROM $table WHERE username='$n'");
+	public function get_password($n)
+	{
+		$table = $this->table;
+		$query = $this->db->query("SELECT id_user, password, nama FROM $table WHERE username='$n'");
 
-        if ($query->num_rows() >= 1) {
-            return $query->row();
-        } else {
-            return 0;
-        }
-    }
+		if ($query->num_rows() >= 1) {
+			return $query->row();
+		} else {
+			return 0;
+		}
+	}
 
-    public function get_all($h, $b)
-    {
-        // deklarasikan variabel global agar bisa dipakai di dalam fungsi ini
-        $table = $this->table;
+	public function get_all($id=0)
+	{
+		// deklarasikan variabel global agar bisa dipakai di dalam fungsi ini
+		$table = $this->table;
 
-        // sql
-        // $query = $this->db->query("SELECT * FROM $table ORDER BY tanggal_kunj DESC LIMIT $h, $b");
-        $query = $this->db->query("SELECT
-            tabelKunjungan.idKunjungan,
-            tabelKunjungan.nama as nama_pengunjung,
-            tabelKunjungan.tanggal_kunj AS tanggal,
-            tabelKunjungan.no_telp,
-            tabelKunjungan.detail_acara,
-            tabelUser.nama_user,
-            tabelKota.nama_kota,
-            tabelDaerah.nama_daerah,
-            tabelKeperluan.nama_keperluan,
-            tabelInstansi.nama_instansi
-        FROM
-            $table
-        INNER JOIN tabelDaerah ON tabelKunjungan.idDaerah = tabelDaerah.idDerah
-        INNER JOIN tabelKota ON tabelDaerah.idKota=tabelKota.idKota
-        INNER JOIN tabelKeperluan ON tabelKunjungan.idKeperluan=tabelKeperluan.idKeperluan
-        INNER JOIN tabelInstansi ON tabelKunjungan.idInstansi=tabelInstansi.idInstansi
-        INNER JOIN tabelUser ON tabelKunjungan.idUser=tabelUser.idUser
-        ORDER BY tabelKunjungan.tanggal_kunj DESC LIMIT $h, $b");
+		if ($id==0) {
+			// sql
+			$query = $this->db->query("SELECT * FROM $table ORDER BY date_create DESC");
+		}else{
+			$query = $this->db->query("SELECT * FROM $table WHERE id_user!='$id' ORDER BY date_create DESC");
+		}
+		// num_rows untuk menghitung banyaknya data
+		if ($query->num_rows() >= 1) {
 
-        $countSQL = $this->db->query("SELECT count(nama) as jumlah FROM $table");
+			// return mengembalikan nilai
+			return [
+				"jumlah" => $query->num_rows(),
+				"data" => $query->result()
+			];
+		} else {
+			// return mengembalikan nilai
+			return [
+				"jumlah" => 0,
+				"data" => 0,
+			];
+		}
+	}
 
-        // num_rows untuk menghitung banyaknya data
-        if ($query->num_rows() >= 1) {
-            // menghitung jumlah data tanpa melakukan limit
-            $jumlah = $countSQL->row();
+	public function cek_id_user($id_user = 0)
+	{
+		$table = $this->table;
+		$query = $this->db->query("SELECT idUser FROM $table WHERE idUser='$id_user'");
 
-            // return mengembalikan nilai
-            return [
-                "jumlah" => $jumlah->jumlah,
-                "data" => $query->result()
-            ];
-        } else {
-            // return mengembalikan nilai
-            return [
-                "jumlah" => 0,
-                "data" => 0,
-            ];
-        }
-    }
+		if ($query->num_rows() >= 1) {
+			return [
+				"jumlah" => 1,
+				"data" => 1,
+			];
+		} else {
+			return [
+				"jumlah" => 0,
+				"data" => 0,
+			];
+		}
+	}
 
+	public function cari_nama_pengguna_samdengan($kata_kunci, $id=0)
+	{
+		$table = $this->table;
+		if ($id==0){
+			$query = $this->db->query("SELECT * FROM $table WHERE nama='$kata_kunci'");
+		}else{
+			$query = $this->db->query("SELECT * FROM $table WHERE nama='$kata_kunci' AND id_user!='$id'");
+		}
 
+		if ($query->num_rows() >= 1) {
+			return [
+				"jumlah" => $query->num_rows(),
+				"data" => $query->result()
+			];
+		} else {
+			return [
+				"jumlah" => 0,
+				"data" => 0
+			];
+		}
+	}
 
+	public function ambil_user($id_user)
+	{
+		$table = $this->table;
+		$query = $this->db->query("SELECT * FROM $table WHERE id_user='$id_user'");
 
+		if ($query->num_rows() >= 1) {
+			return [
+				"jumlah" => $query->num_rows(),
+				"data" => $query->row()
+			];
+		} else {
+			return [
+				"jumlah" => 0,
+				"data" => 0
+			];
+		}
+	}
 
+	public function update_user($data, $id)
+	{
+		$this->db->where('id_user', $id);
+		$query = $this->db->update($this->table, $data);
 
+		if ($query) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
+	public function hapus($id)
+	{
+		/*cek apakah data kurang dari 1*/
+		$table = $this->table;
+		$qr = $this->db->query("SELECT * FROM $table");
+		if ($qr->num_rows()<=1){
+			return 2;
+		}else {
+			$this->db->where('id_user', $id);
+			$query = $this->db->delete($table);
 
-
-    public function cek_id_user($id_user = 0)
-    {
-        $table = $this->table;
-        $query = $this->db->query("SELECT idUser FROM $table WHERE idUser='$id_user'");
-
-        if ($query->num_rows() >= 1) {
-            return [
-                "jumlah" => 1,
-                "data" => 1,
-            ];
-        } else {
-            return [
-                "jumlah" => 0,
-                "data" => 0,
-            ];
-        }
-    }
+			if ($query) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	}
 }

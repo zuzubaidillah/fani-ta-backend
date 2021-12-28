@@ -2,7 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 header('Access-Control-Allow-Origin: *');
 
-class Users extends CI_Controller
+class Rekap extends CI_Controller
 {
 
 	public function __construct()
@@ -14,33 +14,119 @@ class Users extends CI_Controller
 
 	public function index()
 	{
-		// cek jumlah data
-		$cek = $this->M_users->cek_data();
+//		// cek jumlah data
+//		$cek = $this->M_users->cek_data();
+//
+//		// $cek 1 / 0
+//		if ($cek) {
+//			$id_user = $this->input->post('auth_key');
+//			// mengirim baris awal dan batas ke models
+//			$get = $this->M_users->get_all($id_user);
+//
+//			// array multidimensi: array didalam array
+//			$hasil = [
+//				"data" => $get['data'],
+//				"meta" => null,
+//				"code" => 200,
+//				"status" => "sukses",
+//				"message" => 'Data ditemukan'
+//			];
+//		} else {
+//			$hasil = [
+//				"code" => 200,
+//				"status" => 'error',
+//				"message" => 'Data Kosong',
+//				'meta' => null,
+//				'data' => null,
+//			];
+//		}
 
-		// $cek 1 / 0
-		if ($cek) {
-			$id_user = $this->input->post('auth_key');
-			// mengirim baris awal dan batas ke models
-			$get = $this->M_users->get_all($id_user);
-
-			// array multidimensi: array didalam array
-			$hasil = [
-				"data" => $get['data'],
-				"meta" => null,
-				"code" => 200,
-				"status" => "sukses",
-				"message" => 'Data ditemukan'
-			];
-		} else {
-			$hasil = [
-				"code" => 200,
-				"status" => 'error',
-				"message" => 'Data Kosong',
-				'meta' => null,
-				'data' => null,
-			];
-		}
-
+		$rekap = [
+			[
+				"nama_dusun" => "Dusun 1",
+				"nama_desa" => "Desa 1",
+				"id_dusun" => "1",
+				"data_buah" => [
+					["nama_jenis_buah" => "buah 1",
+						"id_jenis_buah" => "1",
+						"jumlah" => 9
+					],
+					["nama_jenis_buah" => "buah 2",
+						"id_jenis_buah" => "2",
+						"jumlah" => 2
+					],
+					["nama_jenis_buah" => "buah 3",
+						"id_jenis_buah" => "3",
+						"jumlah" => 3
+					],
+					["nama_jenis_buah" => "buah 4",
+						"id_jenis_buah" => "4",
+						"jumlah" => 0
+					]
+				]
+			],
+			[
+				"nama_dusun" => "Dusun 2",
+				"nama_desa" => "Desa 2",
+				"id_dusun" => "2",
+				"data_buah" => [
+					[
+						"nama_jenis_buah" => "buah 1",
+						"id_jenis_buah" => "1",
+						"jumlah" => 9
+					],
+					[
+						"nama_jenis_buah" => "buah 2",
+						"id_jenis_buah" => "2",
+						"jumlah" => 0
+					],
+					[
+						"nama_jenis_buah" => "buah 3",
+						"id_jenis_buah" => "3",
+						"jumlah" => 3
+					],
+					[
+						"nama_jenis_buah" => "buah 4",
+						"id_jenis_buah" => "4",
+						"jumlah" => 5
+					]
+				]
+			],
+			[
+			"nama_dusun" => "Dusun 3",
+			"nama_desa" => "Desa 3",
+			"id_dusun" => "3",
+			"data_buah" => [
+				[
+					"nama_jenis_buah" => "buah 1",
+					"id_jenis_buah" => "1",
+					"jumlah" => 0
+				],
+				[
+					"nama_jenis_buah" => "buah 2",
+					"id_jenis_buah" => "2",
+					"jumlah" => 0
+				],
+				[
+					"nama_jenis_buah" => "buah 3",
+					"id_jenis_buah" => "3",
+					"jumlah" => 0
+				],
+				[
+					"nama_jenis_buah" => "buah 4",
+					"id_jenis_buah" => "4",
+					"jumlah" => 0
+				]
+			]
+		]
+		];
+		$hasil = [
+			"data" => $rekap,
+			"meta" => null,
+			"code" => 200,
+			"status" => "sukses",
+			"message" => 'Data ditemukan'
+		];
 		$this->output
 			->set_content_type('application/json', 'utf-8')
 			->set_status_header($hasil['code'], $hasil['message'])
